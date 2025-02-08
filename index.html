@@ -10,6 +10,8 @@
             margin: 20px;
             background-color: #f4f4f4;
             color: #333;
+            position: relative;
+            min-height: 100vh;
         }
         .container {
             max-width: 400px;
@@ -52,6 +54,13 @@
             background-color: #f8f9fa;
             border-radius: 4px;
         }
+        .credito {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: #777;
+        }
     </style>
 </head>
 <body>
@@ -81,8 +90,6 @@
         <div id="valorHoraFields" style="display: none;">
             <label for="salarioMensual">Salario mensual bruto:</label>
             <input type="number" id="salarioMensual" placeholder="Ej: 800.00">
-            <label for="horasTrabajadas">Horas trabajadas al mes:</label>
-            <input type="number" id="horasTrabajadas" placeholder="Ej: 160">
         </div>
 
         <!-- Campos para horas extras -->
@@ -93,7 +100,7 @@
             <input type="number" id="horasExtras" placeholder="Ej: 10">
             <label for="tipoHoraExtra">Tipo de hora extra:</label>
             <select id="tipoHoraExtra">
-                <option value="diurna">Diurna</option>
+                <option value="normal">Normal</option>
                 <option value="nocturna">Nocturna</option>
             </select>
         </div>
@@ -104,6 +111,9 @@
         <!-- Resultados -->
         <div class="result" id="resultado"></div>
     </div>
+
+    <!-- Crédito -->
+    <div class="credito">Hecho por Norberto G</div>
 
     <script>
         // Mostrar u ocultar campos según el tipo de cálculo
@@ -182,19 +192,20 @@
 
         function calcularValorHora() {
             const salarioMensual = parseFloat(document.getElementById('salarioMensual').value);
-            const horasTrabajadas = parseFloat(document.getElementById('horasTrabajadas').value);
 
-            if (isNaN(salarioMensual) || isNaN(horasTrabajadas)) {
-                alert("Por favor, ingrese valores válidos.");
+            if (isNaN(salarioMensual)) {
+                alert("Por favor, ingrese un valor válido.");
                 return;
             }
 
-            const valorHora = salarioMensual / horasTrabajadas;
+            const valorHoraNormal = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
+            const valorHoraNocturna = valorHoraNormal * 1.25; // 25% adicional
 
             // Mostrar resultados
             document.getElementById('resultado').innerHTML = `
                 <h2>Resultados:</h2>
-                <p>Valor de la hora: $${valorHora.toFixed(2)}</p>
+                <p>Valor de la hora normal: $${valorHoraNormal.toFixed(2)}</p>
+                <p>Valor de la hora nocturna: $${valorHoraNocturna.toFixed(2)}</p>
             `;
         }
 
@@ -208,16 +219,16 @@
                 return;
             }
 
-            const valorHora = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
-            let tasaHoraExtra;
+            const valorHoraNormal = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
+            let valorHoraExtra;
 
-            if (tipoHoraExtra === "diurna") {
-                tasaHoraExtra = valorHora * 1.5; // 50% más
+            if (tipoHoraExtra === "normal") {
+                valorHoraExtra = valorHoraNormal * 2; // Doble de la hora normal
             } else if (tipoHoraExtra === "nocturna") {
-                tasaHoraExtra = valorHora * 2.0; // 100% más
+                valorHoraExtra = (valorHoraNormal * 2) * 1.25; // Doble más 25%
             }
 
-            const pagoHorasExtras = horasExtras * tasaHoraExtra;
+            const pagoHorasExtras = horasExtras * valorHoraExtra;
 
             // Mostrar resultados
             document.getElementById('resultado').innerHTML = `
