@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcula tu Salario Quincenal o Mensual en Segundos</title>
+    <title>Calculadora de Salario y Horas Extras - El Salvador</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,30 +56,79 @@
 </head>
 <body>
     <div class="container">
-        <h1>Calcula tu Salario Quincenal o Mensual en Segundos</h1>
-        
-        <!-- Menú desplegable para seleccionar tipo de salario -->
-        <label for="tipoSalario">Selecciona el tipo de salario:</label>
-        <select id="tipoSalario">
-            <option value="quincenal">Quincenal</option>
-            <option value="mensual">Mensual</option>
+        <h1>Calcula tu Salario y Horas Extras</h1>
+
+        <!-- Menú desplegable para seleccionar tipo de cálculo -->
+        <label for="tipoCalculo">Selecciona el tipo de cálculo:</label>
+        <select id="tipoCalculo">
+            <option value="salario">Calcular salario neto</option>
+            <option value="valorHora">Calcular valor de la hora</option>
+            <option value="horaExtra">Calcular horas extras</option>
         </select>
 
-        <!-- Campo para ingresar el salario bruto -->
-        <label for="salario">Salario bruto:</label>
-        <input type="number" id="salario" placeholder="Ej: 800.00">
+        <!-- Campos para salario neto -->
+        <div id="salarioFields">
+            <label for="tipoSalario">Tipo de salario:</label>
+            <select id="tipoSalario">
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual">Mensual</option>
+            </select>
+            <label for="salarioBruto">Salario bruto:</label>
+            <input type="number" id="salarioBruto" placeholder="Ej: 800.00">
+        </div>
+
+        <!-- Campos para valor de la hora -->
+        <div id="valorHoraFields" style="display: none;">
+            <label for="salarioMensual">Salario mensual bruto:</label>
+            <input type="number" id="salarioMensual" placeholder="Ej: 800.00">
+            <label for="horasTrabajadas">Horas trabajadas al mes:</label>
+            <input type="number" id="horasTrabajadas" placeholder="Ej: 160">
+        </div>
+
+        <!-- Campos para horas extras -->
+        <div id="horaExtraFields" style="display: none;">
+            <label for="salarioHoraExtra">Salario mensual bruto:</label>
+            <input type="number" id="salarioHoraExtra" placeholder="Ej: 800.00">
+            <label for="horasExtras">Horas extras trabajadas:</label>
+            <input type="number" id="horasExtras" placeholder="Ej: 10">
+            <label for="tipoHoraExtra">Tipo de hora extra:</label>
+            <select id="tipoHoraExtra">
+                <option value="diurna">Diurna</option>
+                <option value="nocturna">Nocturna</option>
+            </select>
+        </div>
 
         <!-- Botón para calcular -->
-        <button onclick="calcularSalario()">Calcular</button>
+        <button onclick="calcular()">Calcular</button>
 
         <!-- Resultados -->
         <div class="result" id="resultado"></div>
     </div>
 
     <script>
+        // Mostrar u ocultar campos según el tipo de cálculo
+        document.getElementById('tipoCalculo').addEventListener('change', function() {
+            const tipoCalculo = this.value;
+            document.getElementById('salarioFields').style.display = tipoCalculo === 'salario' ? 'block' : 'none';
+            document.getElementById('valorHoraFields').style.display = tipoCalculo === 'valorHora' ? 'block' : 'none';
+            document.getElementById('horaExtraFields').style.display = tipoCalculo === 'horaExtra' ? 'block' : 'none';
+        });
+
+        function calcular() {
+            const tipoCalculo = document.getElementById('tipoCalculo').value;
+
+            if (tipoCalculo === 'salario') {
+                calcularSalario();
+            } else if (tipoCalculo === 'valorHora') {
+                calcularValorHora();
+            } else if (tipoCalculo === 'horaExtra') {
+                calcularHoraExtra();
+            }
+        }
+
         function calcularSalario() {
             const tipoSalario = document.getElementById('tipoSalario').value;
-            const salarioBruto = parseFloat(document.getElementById('salario').value);
+            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value);
 
             if (isNaN(salarioBruto)) {
                 alert("Por favor, ingrese un valor válido.");
@@ -96,7 +145,9 @@
             // Cálculo de ISR según el tipo de salario
             if (tipoSalario === "quincenal") {
                 // Tabla quincenal
-                if (baseImponible > 447.62 && baseImponible <= 1019.05) {
+                if (baseImponible > 236.00 && baseImponible <= 447.62) {
+                    isr = (baseImponible - 236.00) * 0.10 + 8.83;
+                } else if (baseImponible > 447.62 && baseImponible <= 1019.05) {
                     isr = (baseImponible - 447.62) * 0.20 + 30.00;
                 } else if (baseImponible > 1019.05) {
                     isr = (baseImponible - 1019.05) * 0.30 + 144.28;
@@ -105,7 +156,9 @@
                 }
             } else if (tipoSalario === "mensual") {
                 // Tabla mensual
-                if (baseImponible > 895.24 && baseImponible <= 2038.10) {
+                if (baseImponible > 472.00 && baseImponible <= 895.24) {
+                    isr = (baseImponible - 472.00) * 0.10 + 17.67;
+                } else if (baseImponible > 895.24 && baseImponible <= 2038.10) {
                     isr = (baseImponible - 895.24) * 0.20 + 60.00;
                 } else if (baseImponible > 2038.10) {
                     isr = (baseImponible - 2038.10) * 0.30 + 288.57;
@@ -124,6 +177,52 @@
                 <p>AFP (7.25%): $${afp.toFixed(2)}</p>
                 <p>ISR: $${isr.toFixed(2)}</p>
                 <p><strong>Salario neto: $${salarioNeto.toFixed(2)}</strong></p>
+            `;
+        }
+
+        function calcularValorHora() {
+            const salarioMensual = parseFloat(document.getElementById('salarioMensual').value);
+            const horasTrabajadas = parseFloat(document.getElementById('horasTrabajadas').value);
+
+            if (isNaN(salarioMensual) || isNaN(horasTrabajadas)) {
+                alert("Por favor, ingrese valores válidos.");
+                return;
+            }
+
+            const valorHora = salarioMensual / horasTrabajadas;
+
+            // Mostrar resultados
+            document.getElementById('resultado').innerHTML = `
+                <h2>Resultados:</h2>
+                <p>Valor de la hora: $${valorHora.toFixed(2)}</p>
+            `;
+        }
+
+        function calcularHoraExtra() {
+            const salarioMensual = parseFloat(document.getElementById('salarioHoraExtra').value);
+            const horasExtras = parseFloat(document.getElementById('horasExtras').value);
+            const tipoHoraExtra = document.getElementById('tipoHoraExtra').value;
+
+            if (isNaN(salarioMensual) || isNaN(horasExtras)) {
+                alert("Por favor, ingrese valores válidos.");
+                return;
+            }
+
+            const valorHora = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
+            let tasaHoraExtra;
+
+            if (tipoHoraExtra === "diurna") {
+                tasaHoraExtra = valorHora * 1.5; // 50% más
+            } else if (tipoHoraExtra === "nocturna") {
+                tasaHoraExtra = valorHora * 2.0; // 100% más
+            }
+
+            const pagoHorasExtras = horasExtras * tasaHoraExtra;
+
+            // Mostrar resultados
+            document.getElementById('resultado').innerHTML = `
+                <h2>Resultados:</h2>
+                <p>Pago por horas extras: $${pagoHorasExtras.toFixed(2)}</p>
             `;
         }
     </script>
