@@ -223,9 +223,10 @@
             let valorHoraExtra;
 
             if (tipoHoraExtra === "normal") {
-                valorHoraExtra = valorHoraNormal * 2; // Doble de la hora normal
+                valorHoraExtra = valorHoraNormal * 2; // Doble de la hora normal (100% adicional)
             } else if (tipoHoraExtra === "nocturna") {
-                valorHoraExtra = (valorHoraNormal * 2) * 1.25; // Doble más 25%
+                const recargoNocturno = valorHoraNormal * 0.25; // 25% de una hora normal
+                valorHoraExtra = (valorHoraNormal * 2) + recargoNocturno; // Doble + 25% de una hora
             }
 
             const pagoHorasExtras = horasExtras * valorHoraExtra;
