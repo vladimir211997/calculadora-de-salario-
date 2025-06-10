@@ -61,11 +61,19 @@
             font-size: 14px;
             color: #777;
         }
+        .actualizado {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Calcula tu Salario y Horas Extras</h1>
+        <p class="actualizado">Actualizado por Norberto Gutiérrez con nuevas reformas 2025 de renta</p>
 
         <label for="tipoCalculo">Selecciona el tipo de cálculo:</label>
         <select id="tipoCalculo">
@@ -109,7 +117,7 @@
     <div class="credito">Hecho por Norberto G</div>
 
     <script>
-        document.getElementById('tipoCalculo').addEventListener('change', function() {
+        document.getElementById('tipoCalculo').addEventListener('change', function () {
             const tipoCalculo = this.value;
             document.getElementById('salarioFields').style.display = tipoCalculo === 'salario' ? 'block' : 'none';
             document.getElementById('valorHoraFields').style.display = tipoCalculo === 'valorHora' ? 'block' : 'none';
@@ -144,8 +152,9 @@
             baseImponible = salarioBruto - isss - afp;
 
             if (tipoSalario === "quincenal") {
-                if (baseImponible > 236.00 && baseImponible <= 447.62) {
-                    isr = (baseImponible - 236.00) * 0.10 + 8.83;
+                // Tabla quincenal actualizada mayo 2025
+                if (baseImponible > 275.00 && baseImponible <= 447.62) {
+                    isr = (baseImponible - 275.00) * 0.10 + 8.83;
                 } else if (baseImponible > 447.62 && baseImponible <= 1019.05) {
                     isr = (baseImponible - 447.62) * 0.20 + 30.00;
                 } else if (baseImponible > 1019.05) {
