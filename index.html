@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,6 +25,13 @@
         h1 {
             text-align: center;
             color: #007BFF;
+        }
+        .actualizado {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+            margin-top: -10px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
@@ -60,13 +68,6 @@
             right: 10px;
             font-size: 14px;
             color: #777;
-        }
-        .actualizado {
-            text-align: center;
-            color: green;
-            font-weight: bold;
-            margin-top: -10px;
-            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -110,7 +111,6 @@
         </div>
 
         <button onclick="calcular()">Calcular</button>
-
         <div class="result" id="resultado"></div>
     </div>
 
@@ -145,33 +145,30 @@
                 return;
             }
 
-            let isss, afp, baseImponible, isr;
-
-            isss = salarioBruto * 0.03;
-            afp = salarioBruto * 0.0725;
-            baseImponible = salarioBruto - isss - afp;
+            let isss = salarioBruto * 0.03;
+            let afp = salarioBruto * 0.0725;
+            let baseImponible = salarioBruto - isss - afp;
+            let isr = 0;
 
             if (tipoSalario === "quincenal") {
-                // Tabla quincenal actualizada mayo 2025
-                if (baseImponible > 275.00 && baseImponible <= 447.62) {
-                    isr = (baseImponible - 275.00) * 0.10 + 8.83;
-                } else if (baseImponible > 447.62 && baseImponible <= 1019.05) {
-                    isr = (baseImponible - 447.62) * 0.20 + 30.00;
-                } else if (baseImponible > 1019.05) {
-                    isr = (baseImponible - 1019.05) * 0.30 + 144.28;
-                } else {
+                if (salarioBruto <= 275) {
                     isr = 0;
+                } else if (salarioBruto <= 447.62) {
+                    isr = (baseImponible - 275.00) * 0.10 + 8.83;
+                } else if (salarioBruto <= 1019.05) {
+                    isr = (baseImponible - 447.62) * 0.20 + 30.00;
+                } else {
+                    isr = (baseImponible - 1019.05) * 0.30 + 144.28;
                 }
             } else if (tipoSalario === "mensual") {
-                // Tabla mensual actualizada mayo 2025
-                if (baseImponible > 550.00 && baseImponible <= 895.24) {
-                    isr = (baseImponible - 550.00) * 0.10 + 17.67;
-                } else if (baseImponible > 895.24 && baseImponible <= 2038.10) {
-                    isr = (baseImponible - 895.24) * 0.20 + 60.00;
-                } else if (baseImponible > 2038.10) {
-                    isr = (baseImponible - 2038.10) * 0.30 + 288.57;
-                } else {
+                if (salarioBruto <= 550) {
                     isr = 0;
+                } else if (salarioBruto <= 895.24) {
+                    isr = (baseImponible - 550.00) * 0.10 + 17.67;
+                } else if (salarioBruto <= 2038.10) {
+                    isr = (baseImponible - 895.24) * 0.20 + 60.00;
+                } else {
+                    isr = (baseImponible - 2038.10) * 0.30 + 288.57;
                 }
             }
 
