@@ -67,7 +67,6 @@
     <div class="container">
         <h1>Calcula tu Salario y Horas Extras</h1>
 
-        <!-- Menú desplegable para seleccionar tipo de cálculo -->
         <label for="tipoCalculo">Selecciona el tipo de cálculo:</label>
         <select id="tipoCalculo">
             <option value="salario">Calcular salario neto</option>
@@ -75,7 +74,6 @@
             <option value="horaExtra">Calcular horas extras</option>
         </select>
 
-        <!-- Campos para salario neto -->
         <div id="salarioFields">
             <label for="tipoSalario">Tipo de salario:</label>
             <select id="tipoSalario">
@@ -86,13 +84,11 @@
             <input type="number" id="salarioBruto" placeholder="Ej: 800.00">
         </div>
 
-        <!-- Campos para valor de la hora -->
         <div id="valorHoraFields" style="display: none;">
             <label for="salarioMensual">Salario mensual bruto:</label>
             <input type="number" id="salarioMensual" placeholder="Ej: 800.00">
         </div>
 
-        <!-- Campos para horas extras -->
         <div id="horaExtraFields" style="display: none;">
             <label for="salarioHoraExtra">Salario mensual bruto:</label>
             <input type="number" id="salarioHoraExtra" placeholder="Ej: 800.00">
@@ -105,18 +101,14 @@
             </select>
         </div>
 
-        <!-- Botón para calcular -->
         <button onclick="calcular()">Calcular</button>
 
-        <!-- Resultados -->
         <div class="result" id="resultado"></div>
     </div>
 
-    <!-- Crédito -->
     <div class="credito">Hecho por Norberto G</div>
 
     <script>
-        // Mostrar u ocultar campos según el tipo de cálculo
         document.getElementById('tipoCalculo').addEventListener('change', function() {
             const tipoCalculo = this.value;
             document.getElementById('salarioFields').style.display = tipoCalculo === 'salario' ? 'block' : 'none';
@@ -147,14 +139,11 @@
 
             let isss, afp, baseImponible, isr;
 
-            // Deducciones comunes (ISSS y AFP)
             isss = salarioBruto * 0.03;
             afp = salarioBruto * 0.0725;
             baseImponible = salarioBruto - isss - afp;
 
-            // Cálculo de ISR según el tipo de salario
             if (tipoSalario === "quincenal") {
-                // Tabla quincenal
                 if (baseImponible > 236.00 && baseImponible <= 447.62) {
                     isr = (baseImponible - 236.00) * 0.10 + 8.83;
                 } else if (baseImponible > 447.62 && baseImponible <= 1019.05) {
@@ -165,9 +154,9 @@
                     isr = 0;
                 }
             } else if (tipoSalario === "mensual") {
-                // Tabla mensual
-                if (baseImponible > 472.00 && baseImponible <= 895.24) {
-                    isr = (baseImponible - 472.00) * 0.10 + 17.67;
+                // Tabla mensual actualizada mayo 2025
+                if (baseImponible > 550.00 && baseImponible <= 895.24) {
+                    isr = (baseImponible - 550.00) * 0.10 + 17.67;
                 } else if (baseImponible > 895.24 && baseImponible <= 2038.10) {
                     isr = (baseImponible - 895.24) * 0.20 + 60.00;
                 } else if (baseImponible > 2038.10) {
@@ -179,7 +168,6 @@
 
             const salarioNeto = salarioBruto - isss - afp - isr;
 
-            // Mostrar resultados
             document.getElementById('resultado').innerHTML = `
                 <h2>Resultados:</h2>
                 <p>Salario bruto: $${salarioBruto.toFixed(2)}</p>
@@ -198,10 +186,9 @@
                 return;
             }
 
-            const valorHoraNormal = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
-            const valorHoraNocturna = valorHoraNormal * 1.25; // 25% adicional
+            const valorHoraNormal = salarioMensual / 240;
+            const valorHoraNocturna = valorHoraNormal * 1.25;
 
-            // Mostrar resultados
             document.getElementById('resultado').innerHTML = `
                 <h2>Resultados:</h2>
                 <p>Valor de la hora normal: $${valorHoraNormal.toFixed(2)}</p>
@@ -219,19 +206,18 @@
                 return;
             }
 
-            const valorHoraNormal = salarioMensual / 240; // 240 horas al mes (30 días * 8 horas)
+            const valorHoraNormal = salarioMensual / 240;
             let valorHoraExtra;
 
             if (tipoHoraExtra === "normal") {
-                valorHoraExtra = valorHoraNormal * 2; // Doble de la hora normal (100% adicional)
+                valorHoraExtra = valorHoraNormal * 2;
             } else if (tipoHoraExtra === "nocturna") {
-                const recargoNocturno = valorHoraNormal * 0.25; // 25% de una hora normal
-                valorHoraExtra = (valorHoraNormal * 2) + recargoNocturno; // Doble + 25% de una hora
+                const recargoNocturno = valorHoraNormal * 0.25;
+                valorHoraExtra = (valorHoraNormal * 2) + recargoNocturno;
             }
 
             const pagoHorasExtras = horasExtras * valorHoraExtra;
 
-            // Mostrar resultados
             document.getElementById('resultado').innerHTML = `
                 <h2>Resultados:</h2>
                 <p>Pago por horas extras: $${pagoHorasExtras.toFixed(2)}</p>
