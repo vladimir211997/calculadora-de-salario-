@@ -83,6 +83,25 @@
             <input type="number" id="salarioBruto" placeholder="Ej: 800.00">
         </div>
 
+        <div id="valorHoraFields" style="display: none;">
+            <label for="salarioMensual">Salario mensual bruto:</label>
+            <input type="number" id="salarioMensual" placeholder="Ej: 800.00">
+            <label for="horasTrabajadas">Horas trabajadas al mes:</label>
+            <input type="number" id="horasTrabajadas" placeholder="Ej: 160">
+        </div>
+
+        <div id="horaExtraFields" style="display: none;">
+            <label for="salarioHoraExtra">Salario mensual bruto:</label>
+            <input type="number" id="salarioHoraExtra" placeholder="Ej: 800.00">
+            <label for="horasExtras">Horas extras trabajadas:</label>
+            <input type="number" id="horasExtras" placeholder="Ej: 10">
+            <label for="tipoHoraExtra">Tipo de hora extra:</label>
+            <select id="tipoHoraExtra">
+                <option value="diurna">Diurna</option>
+                <option value="nocturna">Nocturna</option>
+            </select>
+        </div>
+
         <div id="recalculoFields" style="display: none;">
             <label for="acumulado">Monto acumulado (junio o diciembre):</label>
             <input type="number" id="acumulado" placeholder="Ej: 12000">
@@ -97,13 +116,18 @@
     <script>
         document.getElementById('tipoCalculo').addEventListener('change', function() {
             const tipo = this.value;
-            document.getElementById('salarioFields').style.display = (tipo === 'salario') ? 'block' : 'none';
-            document.getElementById('recalculoFields').style.display = (tipo === 'recalculo') ? 'block' : 'none';
+            document.getElementById('salarioFields').style.display = tipo === 'salario' ? 'block' : 'none';
+            document.getElementById('valorHoraFields').style.display = tipo === 'valorHora' ? 'block' : 'none';
+            document.getElementById('horaExtraFields').style.display = tipo === 'horaExtra' ? 'block' : 'none';
+            document.getElementById('recalculoFields').style.display = tipo === 'recalculo' ? 'block' : 'none';
+            document.getElementById('resultado').innerHTML = '';
         });
 
         function calcular() {
             const tipo = document.getElementById('tipoCalculo').value;
             if (tipo === 'salario') calcularSalario();
+            else if (tipo === 'valorHora') calcularValorHora();
+            else if (tipo === 'horaExtra') calcularHoraExtra();
             else if (tipo === 'recalculo') calcularRecalculo();
         }
 
@@ -145,24 +169,48 @@
             `;
         }
 
+        function calcularValorHora() {
+            const salarioMensual = parseFloat(document.getElementById('salarioMensual').value);
+            const horasTrabajadas = parseFloat(document.getElementById('horasTrabajadas').value);
+
+            if (isNaN(salarioMensual) || isNaN(horasTrabajadas)) {
+                alert("Por favor, ingrese valores válidos.");
+                return;
+            }
+
+            const valorHora = salarioMensual / horasTrabajadas;
+
+            document.getElementById('resultado').innerHTML = `
+                <h2>Resultados:</h2>
+                <p>Valor de la hora: $${valorHora.toFixed(2)}</p>
+            `;
+        }
+
+        function calcularHoraExtra() {
+            const salarioMensual = parseFloat(document.getElementById('salarioHoraExtra').value);
+            const horasExtras = parseFloat(document.getElementById('horasExtras').value);
+            const tipoHoraExtra = document.getElementById('tipoHoraExtra').value;
+
+            if (isNaN(salarioMensual) || isNaN(horasExtras)) {
+                alert("Por favor, ingrese valores válidos.");
+                return;
+            }
+
+            const valorHora = salarioMensual / 240;
+            const tasaHoraExtra = tipoHoraExtra === "diurna" ? valorHora * 1.5 : valorHora * 2.0;
+            const pagoHorasExtras = horasExtras * tasaHoraExtra;
+
+            document.getElementById('resultado').innerHTML = `
+                <h2>Resultados:</h2>
+                <p>Pago por horas extras: $${pagoHorasExtras.toFixed(2)}</p>
+            `;
+        }
+
         function calcularRecalculo() {
             const monto = parseFloat(document.getElementById('acumulado').value);
             if (isNaN(monto)) return alert("Ingrese un monto acumulado válido.");
             let isr = 0;
             let tipo = '';
-            if (monto <= 6600) {
-                isr = 0;
-                tipo = 'Diciembre';
-            } else if (monto <= 10742.86) {
-                isr = (monto - 6600) * 0.10 + 212.12;
-                tipo = 'Diciembre';
-            } else if (monto <= 24457.14) {
-                isr = (monto - 10742.86) * 0.20 + 720.00;
-                tipo = 'Diciembre';
-            } else {
-                isr = (monto - 24457.14) * 0.30 + 3462.86;
-                tipo = 'Diciembre';
-            }
 
             if (monto <= 3300) {
                 isr = 0;
@@ -176,6 +224,19 @@
             } else {
                 isr = (monto - 12228.60) * 0.30 + 1731.42;
                 tipo = 'Junio';
+            }
+
+            if (monto > 6600) {
+                if (monto <= 10742.86) {
+                    isr = (monto - 6600) * 0.10 + 212.12;
+                    tipo = 'Diciembre';
+                } else if (monto <= 24457.14) {
+                    isr = (monto - 10742.86) * 0.20 + 720.00;
+                    tipo = 'Diciembre';
+                } else {
+                    isr = (monto - 24457.14) * 0.30 + 3462.86;
+                    tipo = 'Diciembre';
+                }
             }
 
             document.getElementById('resultado').innerHTML = `
