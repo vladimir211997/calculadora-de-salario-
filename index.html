@@ -70,6 +70,7 @@
             <select id="tipoSalario">
                 <option value="quincenal">Quincenal</option>
                 <option value="mensual">Mensual</option>
+                <option value="semanal">Semanal</option>
             </select>
             <label for="salarioBruto">Salario bruto:</label>
             <input type="number" id="salarioBruto" placeholder="Ej: 800.00">
@@ -131,25 +132,23 @@
             const isss = salarioBruto * 0.03;
             const afp = salarioBruto * 0.0725;
             const baseImponible = salarioBruto - isss - afp;
-
             let isr = 0;
 
-            if (tipoSalario === "quincenal") {
-                if (baseImponible > 275 && baseImponible <= 447.62) {
-                    isr = (baseImponible - 275) * 0.10;
-                } else if (baseImponible > 447.62 && baseImponible <= 1019.05) {
-                    isr = (baseImponible - 447.62) * 0.20 + 17.67;
-                } else if (baseImponible > 1019.05) {
-                    isr = (baseImponible - 1019.05) * 0.30 + 60.00;
-                }
-            } else if (tipoSalario === "mensual") {
-                if (baseImponible > 550 && baseImponible <= 895.24) {
-                    isr = (baseImponible - 550) * 0.10;
-                } else if (baseImponible > 895.24 && baseImponible <= 2038.10) {
-                    isr = (baseImponible - 895.24) * 0.20 + 34.52;
-                } else if (baseImponible > 2038.10) {
-                    isr = (baseImponible - 2038.10) * 0.30 + 174.10;
-                }
+            if (tipoSalario === "mensual") {
+                if (baseImponible <= 550) isr = 0;
+                else if (baseImponible <= 895.24) isr = (baseImponible - 550.00) * 0.10 + 17.67;
+                else if (baseImponible <= 2038.10) isr = (baseImponible - 895.24) * 0.20 + 60.00;
+                else isr = (baseImponible - 2038.10) * 0.30 + 288.57;
+            } else if (tipoSalario === "quincenal") {
+                if (baseImponible <= 275) isr = 0;
+                else if (baseImponible <= 447.62) isr = (baseImponible - 275.00) * 0.10 + 8.83;
+                else if (baseImponible <= 1019.05) isr = (baseImponible - 447.62) * 0.20 + 30.00;
+                else isr = (baseImponible - 1019.05) * 0.30 + 144.28;
+            } else if (tipoSalario === "semanal") {
+                if (baseImponible <= 137.50) isr = 0;
+                else if (baseImponible <= 223.81) isr = (baseImponible - 137.50) * 0.10 + 4.42;
+                else if (baseImponible <= 509.52) isr = (baseImponible - 223.81) * 0.20 + 15.00;
+                else isr = (baseImponible - 509.52) * 0.30 + 72.14;
             }
 
             const salarioNeto = salarioBruto - isss - afp - isr;
@@ -192,7 +191,7 @@
             }
 
             const valorHora = salarioMensual / 240;
-            let tasaHoraExtra = tipoHoraExtra === "diurna" ? valorHora * 1.5 : valorHora * 2.0;
+            const tasaHoraExtra = tipoHoraExtra === "diurna" ? valorHora * 1.5 : valorHora * 2.0;
             const pagoHorasExtras = horasExtras * tasaHoraExtra;
 
             document.getElementById('resultado').innerHTML = `
